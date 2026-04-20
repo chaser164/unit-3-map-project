@@ -1,0 +1,460 @@
+<!-- Candlepin bowling scrollytelling — boilerplate from Yale Scrollama pattern (Jonathan Soma / Aaron Reiss); see ../example.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Candlepin Bowling as an Endangered Species</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Space Mono", "Courier New", monospace;
+        color: #f0f0f0;
+        background: #1a1a1a;
+      }
+
+      .title-block {
+        text-align: center;
+        padding: 3rem 1.25rem 2rem;
+      }
+
+      .title-block h1 {
+        margin: 0 auto;
+        max-width: 52rem;
+        font-family: Copperplate, "Copperplate Gothic Light", "Palatino Linotype", Palatino, serif;
+        font-size: clamp(1.35rem, 3.5vw, 2.25rem);
+        font-weight: 400;
+        letter-spacing: 0.02em;
+        line-height: 1.25;
+        color: #f5f0e6;
+      }
+
+      .subtitle {
+        margin: 1rem auto 0;
+        max-width: 42rem;
+        font-size: 1rem;
+        color: #9a9a9a;
+      }
+
+      #scrolly {
+        position: relative;
+        padding: 1rem;
+      }
+
+      .scrolly-overlay {
+        position: relative;
+        padding: 0;
+        max-width: 42rem;
+        margin-left: 2px;
+        margin-right: auto;
+      }
+
+      .sticky-thing {
+        position: -webkit-sticky;
+        position: sticky;
+        left: 0;
+        width: 100%;
+        margin: 0;
+        z-index: 0;
+        top: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      #mapFrame,
+      .map-frame-main,
+      .map-frame-extra {
+        position: relative;
+        width: 100%;
+        max-width: min(90vw, 720px);
+        margin: 0 auto;
+      }
+
+      #scrollyPhoto,
+      #scrollyPhotoMain,
+      #scrollyPhotoExtra {
+        display: block;
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        object-position: center;
+        transition: opacity 0.35s ease;
+      }
+
+      .step {
+        margin: 0 auto 25rem;
+        background: transparent;
+        color: #f0f0f0;
+        padding: 0;
+        border: none;
+        box-shadow: none;
+      }
+
+      .step .step-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #c4a574;
+        padding: 0.6rem 1rem 0;
+      }
+
+      .step p {
+        margin: 0;
+        padding: 0.75rem 1rem 1.25rem;
+        font-size: 1.1rem;
+        line-height: 1.55;
+        max-width: 100%;
+      }
+
+      /* Block where the image scrolls with the copy (not sticky) */
+      .inline-narrative {
+        max-width: 42rem;
+        margin: 0 auto;
+        padding: 2rem 1.25rem 4rem;
+      }
+
+      .inline-narrative figure {
+        margin: 0 0 1.25rem;
+      }
+
+      .inline-narrative img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
+      }
+
+      .inline-narrative p {
+        margin: 0;
+        font-size: 1.1rem;
+        line-height: 1.55;
+      }
+
+      .inline-narrative .step-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #c4a574;
+        margin-bottom: 0.75rem;
+      }
+
+      @media only screen and (min-width: 700px) {
+        #scrolly.side-by-side,
+        #scrolly-main.side-by-side,
+        #scrolly-extra.side-by-side {
+          display: flex;
+        }
+
+        #scrolly.side-by-side > div,
+        #scrolly-main.side-by-side > div,
+        #scrolly-extra.side-by-side > div {
+          flex-basis: 0;
+          flex-grow: 1;
+          flex-shrink: 1;
+          padding: 0.75em;
+        }
+
+        #scrolly.side-by-side .scrolly-overlay,
+        #scrolly-main.side-by-side .scrolly-overlay,
+        #scrolly-extra.side-by-side .scrolly-overlay {
+          margin-top: 70vh;
+          order: 0;
+          min-width: 18rem;
+          max-width: 28rem;
+        }
+
+        #scrolly.side-by-side .sticky-thing,
+        #scrolly-main.side-by-side .sticky-thing,
+        #scrolly-extra.side-by-side .sticky-thing {
+          order: 1;
+          flex-grow: 2;
+        }
+      }
+    </style>
+    <script src="https://unpkg.com/intersection-observer@0.5.1/intersection-observer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/scrollama/3.0.4/scrollama.min.js"></script>
+  </head>
+
+  <body>
+    <header class="title-block">
+      <h1>Candlepin Bowling as an Endangered Species: Not Much Time to Spare</h1>
+      <p class="subtitle">Chase Reynders</p>
+    </header>
+
+    <section id="scrolly" class="side-by-side">
+      <div class="sticky-thing">
+        <div id="mapFrame">
+          <img id="scrollyPhoto" src="img/welcome.png" alt="Map frame for the candlepin story" />
+        </div>
+      </div>
+
+      <div class="scrolly-overlay">
+        <div class="step" data-step-index="0">
+          <div class="step-label"></div>
+          <p>
+            Welcome to the world of Candlepin Bowling: a charming northern New England pastime whose quaint alleys have dotted the landscape for over a century.
+          </p>
+        </div>
+        <div class="step" data-step-index="1">
+          <div class="step-label"></div>
+          <p>
+            All of these alleys have stories to tell and dedicated bowlers keeping them afloat. They are pillars of their New England communities. Yet in recent years, Candlepin Bowling has come to resemble an <b>endangered species</b>.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="inline-narrative" aria-label="Candlepin background">
+      <p>
+        But first, some background. What is Candlepin Bowling, and how is it different from regular 10-pin?
+      </p>
+      <figure>
+        <br><br>
+        <img src="img/diagram.png" alt="Candlepin vs. 10-pin — swap this asset in img/ when ready" />
+        <br><br>
+        <p>
+          Candlepin Bowling is a regional variant of what the rest of the world knows simply as "bowling" (10-pin). There are three main differences: ball size, pin shape, and rolls per round. Other than that, the game is the same.
+        </p>
+      </figure>
+      <div class="step-label"></div>
+    </section>
+
+    <section id="scrolly-main" class="side-by-side">
+      <div class="sticky-thing">
+        <div class="mapFrame map-frame-main">
+          <img id="scrollyPhotoMain" src="img/welcome.png" alt="Map sequence for the candlepin story" />
+        </div>
+      </div>
+
+      <div class="scrolly-overlay">
+        <div class="step" data-step-index="0">
+          <div class="step-label"></div>
+          <p>
+            Candlepin was invented in Worcester, Massachusetts in 1880.
+          </p>
+        </div>
+        <div class="step" data-step-index="1">
+          <div class="step-label"></div>
+          <p>
+            And This is exactly where our story of  endangerment begins. Today, Worcester itself contains 0 active Candlepin alleys; the birthplace of this game has grown dormant, suggesting an uncertain future for the sport.
+          </p>
+        </div>
+        <div class="step" data-step-index="2">
+          <div class="step-label"></div>
+          <p>
+            Another sign of endangerment: only one Candlepin Bowling ball manufacturer remains. And even worse, all Candlepin pin setter manufacturers have been defunct since the 1960s. The result is a fragile supply chain ecosystem a couple malfunctions away from collapsing.
+          </p>
+        </div>
+        <div class="step" data-step-index="3">
+          <div class="step-label"></div>
+          <p>
+            To get a better sense of how businesses are holding up, I spoke with several Candlepin alley owners and operators.
+          </p>
+          <p>
+            One story from John of <i>Game Time Lanes & Entertainment</i> highlights the desparation underpinning the Candlepin Bowling supply chain. According to John, <i>Woburn Bowladrome</i>'s closure led to a "cannabalization" of the alley.</i> 
+          </p>
+        </div>
+        <div class="step" data-step-index="4">
+          <div class="step-label"></div>
+          <p>
+            Even nearby alleys that didn't need extra parts took what they could from this shut-down alley as a form of insurance: since everyone relies on EPCO and most of their Candlepin pin setters are antique machinery by this point, preventative part-hoarding is the only way to ensure your own survival in the event that repairs are needed.
+          </p>
+        </div>
+        <div class="step" data-step-index="5">
+          <div class="step-label"></div>
+          <p>
+            You can imagine (pessimistically) how such a last-resort process could spell doom for Candlepin Bowling. Clearly, Candlepin bowling parts are a limited, temporary resource, and their fragility is tangible.
+          </p>
+        </div>
+        <div class="step" data-step-index="6">
+          <div class="step-label"></div>
+          <p>If the process continues, the Candlepin Bowling supply chain will cannibalize itself into oblivion.</p>
+          <br><br>
+          <p>Consider the hypothetical consequences of this process iterated over the next several years:</p>
+        </div>
+        <div class="step" data-step-index="7">
+          <div class="step-label"></div>
+        </div>
+        <div class="step" data-step-index="8">
+          <div class="step-label"></div>
+        </div>
+        <div class="step" data-step-index="9">
+          <div class="step-label"></div>
+        </div>
+        <div class="step" data-step-index="10">
+          <div class="step-label"></div>
+        </div>
+        <div class="step" data-step-index="11">
+          <div class="step-label"></div>
+        </div>
+        <div class="step" data-step-index="12">
+          <div class="step-label"></div>
+        </div>
+        <div class="step" data-step-index="13">
+          <div class="step-label"></div>
+        </div>
+        <div class="step" data-step-index="14">
+          <div class="step-label"></div>
+          <p>And so it would continue, limited parts passing from one alley to another until they're all used up or broken down.</p>
+        </div>
+      </div>
+    </section>
+
+
+
+    <section id="scrolly-extra" class="side-by-side" aria-label="Additional map sequence">
+      <div class="sticky-thing">
+        <div class="mapFrame map-frame-extra">
+          <img id="scrollyPhotoExtra" src="img/familydivisions.png" alt="Additional maps" />
+        </div>
+      </div>
+
+      <div class="scrolly-overlay">
+        <div class="step" data-step-index="0">
+          <div class="step-label"></div>
+          <p>How to survive?</p>
+          <br><br>
+          <p>Some alleys have started adapting to survive: through my phone call research, I've found expanding to include conventional 10-pin as well as selling to corporations to be two popular exit strategies.</p>
+        </div>
+        <div class="step" data-step-index="1">
+          <div class="step-label"></div>
+          <p>Note the lack of purely-candlepin, corporately-owned alleys! All in all, the act of sticking with Candlepin Bowling as a business model is becoming increasingly difficult.</p>
+        </div>
+        <div class="step" data-step-index="2">
+          <div class="step-label"></div>
+          <p>And yet, these locally-owned, Candlepin-forward establishments are the ones that epitomize the northern New England spirit.</p>
+          <br><br>
+          <p>You can hear it just by giving these places a call and paying attention to the voice on the other end. A clear divide emerges between the charming New England gruffness behind some, and the lifeless robo-menus behind others.</p>
+        </div>
+        <div class="step" data-step-index="3">
+          <div class="step-label"></div>
+          <p>As I was calling around, I asked a few Candlepin alley operators how optimistic they felt about the future of their sport. Even the owners frequently admitted that their tight cohorts of patrons are nearing retirement age, and that existing in the next 50 years without flipping to the 10-pin/corporate dark side feels like a stretch.</p>
+          <br><br>
+          <p>So I urge you: engage with this sport, and support these local businesses while you still can. If you're lucky enough to live near one or find yourself passing through one of these four states, drop by and throw a few frames. You'll be glad you did.</p>
+        </div>
+      </div>
+    </section>
+
+    <p style="text-align: center; font-size: 0.75rem; color: #666; margin: 2rem auto 3rem">
+      Data collected by Chase Reynders, 2026. Coded with assistance from Cursor AI.
+    </p>
+
+    <script>
+      const introMapImages = ["img/welcome.png", "img/labeledbowling.png"];
+      const extraMapImages = [
+        "img/familydivisions.png",
+        "img/familydivisions2.png",
+        "img/familydivisions3.png",
+        "img/welcome.png",
+      ];
+      const phaseMapImages = [
+        "img/worcester.png",
+        "img/worcester-dead.png",
+        "img/epco.png",
+        "img/disperse1.png",
+        "img/disperse2.png",
+        "img/disperse3.png",
+        "img/pred1.png",
+        "img/pred2.png",
+        "img/pred3.png",
+        "img/pred4.png",
+        "img/pred5.png",
+        "img/pred6.png",
+        "img/pred7.png",
+        "img/pred8.png",
+        "img/pred9.png"
+      ];
+
+      introMapImages.concat(phaseMapImages).concat(extraMapImages).forEach(function (src) {
+        const i = new Image();
+        i.src = src;
+      });
+
+      const scrollyPhoto = document.getElementById("scrollyPhoto");
+      const scrollyPhotoMain = document.getElementById("scrollyPhotoMain");
+      const scrollyPhotoExtra = document.getElementById("scrollyPhotoExtra");
+
+      /**
+       * Scrollama’s step enter can skip beats on very fast scroll. We drive map swaps from
+       * geometry: active step = last step whose top is at or above the viewport midpoint
+       * (same 0.5 trigger line Scrollama uses).
+       */
+      function makeMapScrollSync(sectionSelector, imgEl, imageList) {
+        let lastIdx = -1;
+        return function syncMapFromScroll() {
+          const steps = document.querySelectorAll(sectionSelector + " .scrolly-overlay .step");
+          if (!steps.length || !imgEl) return;
+          const triggerY = window.innerHeight * 0.5;
+          let idx = 0;
+          for (let i = 0; i < steps.length; i++) {
+            if (steps[i].getBoundingClientRect().top <= triggerY) idx = i;
+          }
+          if (idx === lastIdx) return;
+          lastIdx = idx;
+          const src = imageList[idx];
+          if (src) imgEl.src = src;
+        };
+      }
+
+      const syncIntro = makeMapScrollSync("#scrolly", scrollyPhoto, introMapImages);
+      const syncMain = makeMapScrollSync("#scrolly-main", scrollyPhotoMain, phaseMapImages);
+      const syncExtra = makeMapScrollSync("#scrolly-extra", scrollyPhotoExtra, extraMapImages);
+
+      let scrollSyncRaf = null;
+      function scheduleMapScrollSync() {
+        if (scrollSyncRaf != null) return;
+        scrollSyncRaf = requestAnimationFrame(function () {
+          scrollSyncRaf = null;
+          syncIntro();
+          syncMain();
+          syncExtra();
+        });
+      }
+
+      window.addEventListener("scroll", scheduleMapScrollSync, { passive: true });
+
+      const scrollerIntro = scrollama();
+      scrollerIntro.setup({
+        step: "#scrolly .scrolly-overlay .step",
+        offset: 0.5,
+        debug: false
+      });
+
+      const scrollerMain = scrollama();
+      scrollerMain.setup({
+        step: "#scrolly-main .scrolly-overlay .step",
+        offset: 0.5,
+        debug: false
+      });
+
+      const scrollerExtra = scrollama();
+      scrollerExtra.setup({
+        step: "#scrolly-extra .scrolly-overlay .step",
+        offset: 0.5,
+        debug: false
+      });
+
+      function resizeScrollers() {
+        scrollerIntro.resize();
+        scrollerMain.resize();
+        scrollerExtra.resize();
+        syncIntro();
+        syncMain();
+        syncExtra();
+      }
+
+      window.addEventListener("resize", resizeScrollers);
+      scheduleMapScrollSync();
+    </script>
+  </body>
+</html>
